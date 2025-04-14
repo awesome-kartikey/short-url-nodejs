@@ -4,6 +4,7 @@ const cookieParser = require("cookie-parser");
 const { connectToMongoDB } = require("./connect");
 const { restrictToLoggedinUserOnly, checkAuth } = require("./middlewares/auth");
 const URL = require("./models/url");
+require("dotenv").config();
 
 const urlRoute = require("./routes/url");
 const staticRoute = require("./routes/staticRouter");
@@ -12,15 +13,12 @@ const userRoute = require("./routes/user");
 const app = express();
 const PORT = 8001;
 
-// Add ?authSource=admin to the end!
-const mongoURI = process.env.MONGODB ?? "mongodb://root:example@127.0.0.1:27017/short-url?authSource=admin";
+const mongoURI = process.env.MONGODB;
 
 console.log("Attempting to connect with URI:", mongoURI); // Keep this for debugging
 
 // Your connectToMongoDB function call
-connectToMongoDB(mongoURI).then(() =>
-  console.log("Mongodb connected")
-);
+connectToMongoDB(mongoURI).then(() => console.log("Mongodb connected"));
 
 app.set("view engine", "ejs");
 app.set("views", path.resolve("./views"));
@@ -50,4 +48,8 @@ app.get("/url/:shortId", async (req, res) => {
   res.redirect(entry.redirectURL);
 });
 
-app.listen(PORT, () => console.log(`Server Started at PORT:${PORT}\nServer URL: http://localhost:${PORT}`));
+app.listen(PORT, () =>
+  console.log(
+    `Server Started at PORT:${PORT}\nServer URL: http://localhost:${PORT}`
+  )
+);
